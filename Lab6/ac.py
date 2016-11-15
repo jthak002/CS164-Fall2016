@@ -5,11 +5,10 @@ from check import ip_checksum
 import select
 
 try:
-	s=socket.socket(socket.AF_INET, socket.SOCK_DGARM)
+	s=socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 except socket.error:
 	print 'Socket creation failed'
 	sys.exit()
-print 'socket created'
 
 host='localhost'
 port=5000
@@ -30,8 +29,8 @@ while 1:
 				print 'Sending Packet: '
 				smh='0&'+ip_checksum(smh)+'&'+smh
 				s.sendto(smh,(host, port))
-				
 			continue
+		
 		elif x is s:
 			d=s.recvfrom(1024)
 			data=d[0]
@@ -42,4 +41,3 @@ while 1:
 				print 'ERR'
 		continue
 sys.exit()
-			
