@@ -28,21 +28,25 @@ print 'socket bind complete'
 #start listening on socket - Persistent TCP connection
 s.listen(10)
 print 'socket listening'
-
+login =False
 #Thread function to handle connections
 def clientthread(conn):
 	#sending welcome message to client server
-	conn.send(' Welcome to facebook')
-	conn.send('Please enter your Username and Password')
+	conn.send(' Welcome to facebook\nPlease enter your Username and Password')
 	
 	#Waiting for client feedback
-	data=conn.recv(1024)
-	print '[' + addr[0] + ':' + str(addr[1]) + '] ' + data
-	data_split = data.split(' ', 4)
-	if ip_authen(data_split[1],data_split[3]):
-		print 'Authentication Successful'
-	else:
-		print 'Authentication Unsuccessful'
+	while 1:
+		data=conn.recv(1024)
+		print '[' + addr[0] + ':' + str(addr[1]) + '] ' + data
+		data_split = data.split(' ', 4)
+		if ip_authen(data_split[1],data_split[3]):
+			print 'Authentication Successful'
+			conn.send('True') #replace with a tougher ACK
+			login=True
+			break
+		else:
+			conn.send('False') #replace with tougher NACK
+			print 'Authentication Unsuccessful'
 	conn.close()
 
 #waiting for client connections
