@@ -2,7 +2,7 @@ import socket
 import os
 import sys
 from thread import*
-
+from authen import ip_authen
 HOST ='' #blank space to ask the socket 
 		 #to bind on all available interfacea
 PORT= 5000 #HOST port can be random
@@ -38,6 +38,11 @@ def clientthread(conn):
 	#Waiting for client feedback
 	data=conn.recv(1024)
 	print '[' + addr[0] + ':' + str(addr[1]) + '] ' + data
+	data_split = data.split(' ', 4)
+	if ip_authen(data_split[1],data_split[3]):
+		print 'Authentication Successful'
+	else:
+		print 'Authentication Unsuccessful'
 	conn.close()
 
 #waiting for client connections
