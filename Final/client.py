@@ -55,17 +55,17 @@ while not login:
 		print 'Authentication Unsuccessful. Please Try Again'
 		continue
 
-#LANDING PAGE--SPLASH SCREEN
-print 'Hey, ' + uname
-#RECV menu items
-menu=s.recv(1024)	
 while 1:
+	#LANDING PAGE--SPLASH SCREEN
+	print 'Hey, ' + uname
+	#Received menu items
+	menu=s.recv(1024)
 	print menu
 	menu_choice=raw_input('Menu choice: ')	#Menu Options
 	s.send(menu_choice)			#Sending user choice to server
 	
 	#_________CHANGE_PASSWORD____________
-	if menu_choice == 'change password':
+	if (menu_choice == 'change password' or menu_choice == '1'):
 		curr_passwd=getpass.getpass('current password    : ')
 		new_passwd=getpass.getpass('new password        : ')
 		conf_passwd=getpass.getpass('confirm new password: ')#check for various requirements
@@ -83,10 +83,12 @@ while 1:
 			print'1.len has to be greater than 4'
 			print'2.new password and confirmed password field should match'
 	#_________LOGOUT___________
-	elif menu_choice == 'logout':
+	elif (menu_choice == 'logout' or menu_choice == '2'):
 		print 'logging out...'
 		os.system('clear')
 		break
+	elif (menu_choice == 'messages' or menu_choice =='3'):
+		print 'Hey, ' + uname + '! Here are your messages.'
 	#________INVALID_ENTRIES_____
 	else:
 		print 'Invalid choice'

@@ -49,21 +49,23 @@ def clientthread(conn):
 			conn.send('False') #replace with tougher NACK
 			print 'Authentication Unsuccessful'
 	waste=conn.recv(1024)	#Python couples the ACKnowledgement and menu in one packet
-				#hence, flushing the sockets buffer 	
-	menu='1.change password\n2.logout'
-	conn.send(menu)
+							#hence, flushing the sockets buffer 	
 	while login:
+		menu='1.change password\n2.logout\n3.messages'
+		conn.send(menu)
 		print 'Menu intiated'
 		menu_choice=conn.recv(1024)
-		if menu_choice =='change password':
+		if (menu_choice =='change password' or menu_choice =='1'):
 			print 'Change passwd'
 			uname=conn.recv(1024)
 			new_passwd=conn.recv(1024)
 			fb_passwdchng(uname,new_passwd)
 			continue
-		elif menu_choice == 'logout':
+		elif (menu_choice == 'logout' or menu_choice == '2'):
 			print 'logging out..'
 			login=False
+		elif (menu_choice == 'messages' or menu_choice == '3'):
+			print 'messages'
 		else:
 			print 'Invalid choice'
 	print 'fin'
