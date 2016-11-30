@@ -89,6 +89,18 @@ while 1:
 		break
 	elif (menu_choice == 'messages' or menu_choice =='3'):
 		print 'Hey, ' + uname + '! Here are your messages.'
+		data=s.recv(1024)
+		print data
+		s.send('messages received')
+	elif (menu_choice == 'send messages' or menu_choice == '4'):
+		frndname=raw_input('Enter Friend\'s name: ')
+		s.send(frndname)
+		if s.recv(1024) == 'True':
+			msg=raw_input('Enter Your Message: ')
+			s.send(msg)
+		else:
+			s.send('garbage value')
+			continue 
 	#________INVALID_ENTRIES_____
 	else:
 		print 'Invalid choice'
