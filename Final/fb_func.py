@@ -78,3 +78,50 @@ def fb_msgdlvry(frndname, uname, msg):
 	msg=uname + ' [' + str(datetime.datetime.now()) + ']: ' + msg +'\n'
 	fileio.write(msg)
 	fileio.close()
+#________!FINDING IF USERNAME EXISTS___________
+def fb_frndexists(uname):
+	uname=uname.strip()
+	unames=[]
+	try:
+		fileio=open('upass.txt', 'r')
+	except IOError:
+		print 'UPASS ERROR'
+		sys.exit()
+	for line in fileio:
+		data=line.split('\t',2)
+		unames.append(data[0])
+	fileio.close()
+	if uname in unames:
+		del unames[:]
+		return True
+	else:
+		del unames[:]
+		return False
+#________!FINDING IF USERNAME EXISTS IN PENDING FRIEND REQUESTS OF FUNAME___________
+def fb_chckpfrndlist(funame,uname):
+	filename='Friends/'+funame+'_pflist.txt'
+	unames=[]
+	try:
+		fileio=open(filename, 'r')
+	except IOError:
+		print 'PLIST ERROR'
+		sys.exit()
+	for line in fileio:
+		unames.append(line.strip())
+	fileio.close()
+	if uname in unames:
+		del unames[:]
+		return True
+	else:
+		del unames[:]
+		return False
+#_________!SENDING FRIEND REQUEST!_______________
+def fb_addfrnd(uname,funame):
+	filename='Friends/'+funame+'_pflist.txt'
+	try:
+		fileio=open(filename,'a')
+	except IOError:
+		print 'PLIST CORRUPT'
+		sys.exit()
+	fileio.write(uname+'\n')
+	fileio.close()

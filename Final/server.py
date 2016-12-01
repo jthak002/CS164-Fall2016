@@ -60,19 +60,22 @@ def clientthread(conn):
 	waste=conn.recv(1024)	#Python couples the ACKnowledgement and menu in one packet
 							#hence, flushing the sockets buffer 	
 	while login:
-		menu='1.change password\n2.logout\n3.messages (' + str(fb_mssgcnt(uname)) + ')\n4.send messages'
+		menu='1.change password\n2.logout\n3.messages (' + str(fb_mssgcnt(uname)) + ')\n4.send messages\n5.send friend request'
 		conn.send(menu)
 		print 'Menu intiated'
 		menu_choice=conn.recv(1024)
+		#__________________CHANGE PASSWORD________________________
 		if (menu_choice =='change password' or menu_choice =='1'):
 			print 'Change passwd'
 			uname=conn.recv(1024)
 			new_passwd=conn.recv(1024)
 			fb_passwdchng(uname,new_passwd)
 			continue
+		#____________________LOGOUT_________________________
 		elif (menu_choice == 'logout' or menu_choice == '2'):
 			print 'logging out..'
 			login=False
+		#________________MESSAGES______________________________
 		elif (menu_choice == 'messages' or menu_choice == '3'):
 			print 'Messages'
 			#receive a list with a list of new messages and old messages
@@ -91,6 +94,7 @@ def clientthread(conn):
 			conn.send(text)
 			conf=conn.recv(1024)
 			print conf
+		#!__________________SEND MESSAGES__________________________
 		elif (menu_choice =='send messages' or menu_choice == '4'):
 			print 'Send Messages..Querying friend_name'
 			frndname=conn.recv(1024)
@@ -105,6 +109,26 @@ def clientthread(conn):
 				print 'NFE-----'
 				conn.recv(1024)
 				continue
+		#________________SEND FRIEND REQUESTS_____________________________
+		elif (menu_choice == 'Send Friend Requests' or menu_choice == '5'):
+			funame=conn.recv(1024)	#Receive the username to send friend request to
+			#check for the following things before sending friend request
+			#1.if the username is a member on facebook
+			#2.if the the username is already friends with the currently logged in user
+			#3.if the username is not equal to the currently logged in user
+			#i.e. the user isn't trying to send a friend request to himself
+			#4. Avoid sending duplicate friend requests
+			conf=fb_frndexists(funame) and not fb_chckfrndlist(uname,funame) and not uname == funame and not fb_chckpfrndlist(funame,uname)
+			conn.send(str(conf)) #checking if user exists or friends already in the list
+			print uname
+			if conf:
+				fb_addfrnd(uname,funame)
+				print 'friend added'
+			conn.recv(1024)
+
+		#_________________ACCEPT FRIEND REQUESTS__________________________
+		elif (menu_choice=='Pending Friend Requests' or menu_choice =='6'):
+			pass
 		else:
 			print 'Invalid choice'
 	print 'fin'

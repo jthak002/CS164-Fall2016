@@ -100,7 +100,18 @@ while 1:
 			s.send(msg)
 		else:
 			s.send('garbage value')
-			continue 
+			continue
+	elif (menu_choice ==' Send Friend Requests' or menu_choice =='5'):
+		funame=raw_input('Enter Friend\'s Username: ')
+		funame=funame.strip()
+		s.send(funame)
+		conf=s.recv(1024)
+		if conf == 'True':
+			print 'Friend Request Sent'
+		else:
+			print 'Friend Request Not Sent\n1.Invalid Username OR\n2.Friend Request Already Sent'
+		s.send('garbage value')
+		  
 	#________INVALID_ENTRIES_____
 	else:
 		print 'Invalid choice'
