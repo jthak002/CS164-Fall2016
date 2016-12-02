@@ -82,27 +82,35 @@ while 1:
 			print'password unchanged'
 			print'1.len has to be greater than 4'
 			print'2.new password and confirmed password field should match'
-	#_________LOGOUT___________
+	#_________LOGOUT___________________________________
 	elif (menu_choice == 'logout' or menu_choice == '2'):
 		print 'logging out...'
 		os.system('clear')
 		break
+	#___________READ MESSAGES___________________________
 	elif (menu_choice == 'messages' or menu_choice =='3'):
 		print 'Hey, ' + uname + '! Here are your messages.'
 		data=s.recv(1024)
 		print data
 		s.send('messages received')
+	#___________SEND MESSAGES_________________________________
 	elif (menu_choice == 'send messages' or menu_choice == '4'):
-		frndname=raw_input('Enter Friend\'s name: ')
+		frndname=''
+		while frndname=='':
+			frndname=raw_input('Enter Friend\'s name: ')
 		s.send(frndname)
 		if s.recv(1024) == 'True':
-			msg=raw_input('Enter Your Message: ')
+			msg=''
+			while (msg==''):
+				msg=raw_input('Enter Your Message: ')
 			s.send(msg)
 		else:
 			s.send('garbage value')
 			continue
 	elif (menu_choice =='Send Friend Requests' or menu_choice =='5'):
-		funame=raw_input('Enter Friend\'s Username: ')
+		funame=''
+		while funame == '':
+			funame=raw_input('Enter Friend\'s Username: ')
 		funame=funame.strip()
 		s.send(funame)
 		conf=s.recv(1024)
@@ -141,10 +149,17 @@ while 1:
 		s.send('garbage value')
 	#________POST A STATUS UPDATE________________________________
 	elif(menu_choice == 'post a status update' or menu_choice =='7'):
-		text_data=raw_input('enter a status update: ')
+		text_data=''
+		while text_data == '':
+			text_data=raw_input('enter a status update: ')
 		s.send(text_data)
 	#________TIMELINE____________________________________________	
 	elif(menu_choice =='timeline' or menu_choice == '8'):
+		print s.recv(1024)
+		s.send('garbage value')
+	#________TIMELINE____________________________________________	
+	elif(menu_choice =='newsfeed' or menu_choice == '9'):
+		print '!_________________NEWS FEED__________________!'
 		print s.recv(1024)
 		s.send('garbage value')
 	#________INVALID_ENTRIES_____

@@ -60,7 +60,7 @@ def clientthread(conn):
 	waste=conn.recv(1024)	#Python couples the ACKnowledgement and menu in one packet
 							#hence, flushing the sockets buffer 	
 	while login:
-		menu='1.change password\n2.logout\n3.messages (' + str(fb_mssgcnt(uname)) + ')\n4.send messages\n5.send friend request\n6.pending friend requests('+str(fb_countpfrnd(uname))+')\n7.enter your status update\n8.timeline\n9.facebook wall'
+		menu='1.change password\n2.logout\n3.messages (' + str(fb_mssgcnt(uname)) + ')\n4.send messages\n5.send friend request\n6.pending friend requests('+str(fb_countpfrnd(uname))+')\n7.enter your status update\n8.timeline\n9.news feed'
 		conn.send(menu)
 		print 'Menu intiated'
 		menu_choice=conn.recv(1024)
@@ -161,7 +161,16 @@ def clientthread(conn):
 			conn.recv(1024)
 		#___________________DISPLAY WALL__________________________________
 		elif (menu_choice =='wall' or menu_choice =='9'):
-			pass
+			num_list,post_list=fb_newsfeed(fb_rtrvflist(uname))
+			if len(num_list) ==0:
+				conn.send("no Posts to show")
+			else:
+				dictionary=dict(zip(num_list,post_list))
+				text=''
+				for key in dictionary:
+					text=text+dictionary[key]+'\n'
+				conn.send(text)
+			conn.recv(1024)
 		#_________________INVALID MENU CHOICE_________________________		
 		else:
 			print 'Invalid choice'

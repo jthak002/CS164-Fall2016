@@ -252,4 +252,37 @@ def fb_tlinedisplay(uname):
 	for line in post_list:
 		tline_txt=tline_txt+line+'\n'
 	return tline_txt
-		
+#___________WALL DISPLAY_____________________
+def fb_newsfeed(flist_cntnt):
+	post_list=[]
+	num_list=[]
+	print flist_cntnt
+	for line in flist_cntnt:
+		i=0
+		filename='Posts/'+line+'_tline'
+		try:
+			fileio=open(filename,'r')
+		except IOError:
+			print 'TLINE Error'
+			sys.exit()
+		for line1 in fileio:
+			if i < 10:
+				line2=line1.split('\t',2)	 
+				num_list.append(int(line2[0]))
+				post_list.append(line2[1].strip())
+				i=i+1
+		fileio.close()
+	return num_list,post_list
+#__________Retrieve friend plist_________________
+def fb_rtrvflist(uname):
+	filename='Friends/'+uname+'_flist.txt'
+	flist_cntnt=[]
+	try:
+		fileio=open(filename,'r')
+	except IOError:
+		print 'PLIST CORRUPT'
+		sys.exit()
+	for line in fileio:
+		flist_cntnt.append(line.strip())
+	fileio.close()
+	return flist_cntnt
