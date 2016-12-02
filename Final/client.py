@@ -139,7 +139,14 @@ while 1:
 			else:
 				print'Invalid entry. please try again'
 		s.send('garbage value')
-		
+	#________POST A STATUS UPDATE________________________________
+	elif(menu_choice == 'post a status update' or menu_choice =='7'):
+		text_data=raw_input('enter a status update: ')
+		s.send(text_data)
+	#________TIMELINE____________________________________________	
+	elif(menu_choice =='timeline' or menu_choice == '8'):
+		print s.recv(1024)
+		s.send('garbage value')
 	#________INVALID_ENTRIES_____
 	else:
 		print 'Invalid choice'

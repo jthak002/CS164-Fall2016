@@ -1,3 +1,5 @@
+jthak001 [2016-12-02 00:52:43.921062]: hello there
+jthak003 [2016-12-01 23:26:04.711847]: Hello!
 jthak002: Hello29
 jthak002: Hello28
 jthak002: Hello27

@@ -1,6 +1,7 @@
 import os
 import sys
 import datetime
+import time
 #______________Accessing user messages_______________
 def fb_mssgs(uname):
 	new_messg=[]
@@ -214,5 +215,41 @@ def fb_rejectfrnd(uname, funame):
 		fileio.write(line+'\n')
 	fileio.close()
 	del unames_kill[:]
-
-
+#____________POST A STATUS__________________
+def fb_poststatus(uname,textdata):
+	filename='Posts/postnum'
+	fileio=open(filename,'r+')
+	postnum=0
+	for line in fileio:
+		postnum=int(line.strip())
+	postnum=postnum+1
+	fileio.seek(0)
+	fileio.truncate()
+	fileio.write(str(postnum))
+	fileio.close()
+	filename='Posts/'+uname+'_tline'
+	try:
+		fileio=open(filename,'a')
+	except:
+		print 'Tline Error'
+		sys.exit()
+	fileio.write(str(postnum)+'\t'+uname+'['+str(datetime.datetime.now())+']: '+ textdata + '\n')
+	fileio.close()
+#________TIMELINE DISPLAY____________________
+def fb_tlinedisplay(uname):
+	filename='Posts/'+uname+'_tline'
+	post_list=[]
+	try:
+		fileio=open(filename,'r')
+	except IOError:
+		print 'TLINE Error'
+		sys.exit()
+	for line in fileio:
+		line_split=line.split('\t',2)
+		post_list.append(line_split[1].strip())
+	post_list.reverse()
+	tline_txt='!______________TIMELINE________________!\n'
+	for line in post_list:
+		tline_txt=tline_txt+line+'\n'
+	return tline_txt
+		
