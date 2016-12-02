@@ -37,7 +37,7 @@ s.listen(10)
 print 'socket listening'
 login =False
 uname=''
-msg_pool = threading.Semaphore(SEMAMSG)
+data_pool = threading.Semaphore(SEMAMSG)
 #Thread function to handle connections
 def clientthread(conn):
 	#sending welcome message to client server
@@ -69,7 +69,9 @@ def clientthread(conn):
 			print 'Change passwd'
 			uname=conn.recv(1024)
 			new_passwd=conn.recv(1024)
+			data_pool.acquire()
 			fb_passwdchng(uname,new_passwd)
+			data_pool.release()
 			continue
 		#____________________LOGOUT_________________________
 		elif (menu_choice == 'logout' or menu_choice == '2'):
@@ -79,10 +81,10 @@ def clientthread(conn):
 		elif (menu_choice == 'messages' or menu_choice == '3'):
 			print 'Messages'
 			#receive a list with a list of new messages and old messages
-			msg_pool.acquire()		#Using semaphores to preserve integrity
+			data_pool.acquire()		#Using semaphores to preserve integrity
 									#of text files in Messages
 			mssg_data = fb_mssgs(uname)
-			msg_pool.release()
+			data_pool.release()
 			new_msg=mssg_data[0]
 			old_msg=mssg_data[1]
 			text='______Unread Messages______\n'
@@ -98,13 +100,15 @@ def clientthread(conn):
 		elif (menu_choice =='send messages' or menu_choice == '4'):
 			print 'Send Messages..Querying friend_name'
 			frndname=conn.recv(1024)
+			data_pool.acquire()
 			isfrnd=fb_chckfrndlist(uname, frndname)
+			data_pool.release()
 			conn.send(str(isfrnd))
 			if isfrnd:
 				msg=conn.recv(4096)
-				msg_pool.acquire()
+				data_pool.acquire()
 				fb_msgdlvry(frndname,uname,msg)
-				msg_pool.release()
+				data_pool.release()
 			else:
 				print 'NFE-----'
 				conn.recv(1024)
@@ -118,18 +122,24 @@ def clientthread(conn):
 			#3.if the username is not equal to the currently logged in user
 			#i.e. the user isn't trying to send a friend request to himself
 			#4. Avoid sending duplicate friend requests
+			data_pool.acquire()
 			conf=fb_frndexists(funame) and not fb_chckfrndlist(uname,funame) and not uname == funame and not fb_chckpfrndlist(funame,uname)
+			data_pool.release()
 			conn.send(str(conf)) #checking if user exists or friends already in the list
 			print uname
 			if conf:
+				data_pool.acquire()
 				fb_addfrnd(uname,funame)
+				data_pool.release()
 				print 'friend added'
 			conn.recv(1024)
 
 		#_________________ACCEPT FRIEND REQUESTS__________________________
 		elif (menu_choice=='Pending Friend Requests' or menu_choice =='6'):
 			textdata=''
+			data_pool.acquire()
 			plist_cntnt=fb_rtrvplist(uname)
+			data_pool.release()
 			for line in plist_cntnt:
 				textdata=textdata+line+'\n'
 			if textdata == '':	#incase of empty pflist
@@ -142,10 +152,14 @@ def clientthread(conn):
 			s_split=s.split()
 			if(len(s_split) is 2):
 				if s_split[0] == 'accept':
+					data_pool.acquire()
 					fb_acceptfrnd(uname,s_split[1].strip())
+					data_pool.release()
 					conn.send(s_split[1]+'\'s friend request has been accepted')
 				else:
+					data_pool.acquire()
 					fb_rejectfrnd(uname,s_split[1].strip())
+					data_pool.release()
 					conn.send(s_split[1]+'\'s friend request has been rejected')
 			else:
 				conn.send('no changes have occured') 
@@ -154,14 +168,21 @@ def clientthread(conn):
 		#_________________POST A STATUS UPDATE___________________________
 		elif (menu_choice =='post a status update' or menu_choice =='7'):
 			textdata=conn.recv(1024)
+			data_pool.acquire()
 			fb_poststatus(uname,textdata)
+			data_pool.release()
 		#__________________ DISPLAY TIMELINE______________________________
 		elif (menu_choice =='timeline' or menu_choice == '8'):
-			conn.send(fb_tlinedisplay(uname))
+			data_pool.acquire()
+			temp_data=fb_tlinedisplay(uname)
+			data_pool.release()
+			conn.send(temp_data)
 			conn.recv(1024)
 		#___________________DISPLAY WALL__________________________________
 		elif (menu_choice =='wall' or menu_choice =='9'):
+			data_pool.acquire()
 			num_list,post_list=fb_newsfeed(fb_rtrvflist(uname))
+			data_pool.release()
 			if len(num_list) ==0:
 				conn.send("no Posts to show")
 			else:
