@@ -60,7 +60,7 @@ def clientthread(conn):
 	waste=conn.recv(1024)	#Python couples the ACKnowledgement and menu in one packet
 							#hence, flushing the sockets buffer 	
 	while login:
-		menu='1.change password\n2.logout\n3.messages (' + str(fb_mssgcnt(uname)) + ')\n4.send messages\n5.send friend request'
+		menu='1.change password\n2.logout\n3.messages (' + str(fb_mssgcnt(uname)) + ')\n4.send messages\n5.send friend request\n6.pending friend requests('+str(fb_countpfrnd(uname))+')'
 		conn.send(menu)
 		print 'Menu intiated'
 		menu_choice=conn.recv(1024)
@@ -128,7 +128,30 @@ def clientthread(conn):
 
 		#_________________ACCEPT FRIEND REQUESTS__________________________
 		elif (menu_choice=='Pending Friend Requests' or menu_choice =='6'):
-			pass
+			textdata=''
+			plist_cntnt=fb_rtrvplist(uname)
+			for line in plist_cntnt:
+				textdata=textdata+line+'\n'
+			if textdata == '':	#incase of empty pflist
+				textdata='empty'
+				conn.send(textdata)
+				conn.recv(1024)	#Garbage value
+				continue
+			conn.send(textdata.strip())
+			s=conn.recv(1024)
+			s_split=s.split()
+			if(len(s_split) is 2):
+				if s_split[0] == 'accept':
+					fb_acceptfrnd(uname,s_split[1].strip())
+					conn.send(s_split[1]+'\'s friend request has been accepted')
+				else:
+					fb_rejectfrnd(uname,s_split[1].strip())
+					conn.send(s_split[1]+'\'s friend request has been rejected')
+			else:
+				conn.send('no changes have occured') 
+			conn.recv(1024)
+			continue
+		#_________________INVALID MENU CHOICE_____________________________		
 		else:
 			print 'Invalid choice'
 	print 'fin'

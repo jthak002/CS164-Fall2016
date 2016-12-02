@@ -125,3 +125,94 @@ def fb_addfrnd(uname,funame):
 		sys.exit()
 	fileio.write(uname+'\n')
 	fileio.close()
+#_______COUNT PENDING FRIEND REQUESTS____________
+def fb_countpfrnd(uname):
+	filename='Friends/'+uname+'_pflist.txt'
+	count=0
+	try:
+		fileio=open(filename,'r')
+	except IOError:
+		print 'PLIST CORRUPT'
+		sys.exit()
+	for line in fileio:
+		count=count+1
+	fileio.close()
+	return count
+#__________Retrieve friend plist_________________
+def fb_rtrvplist(uname):
+	filename='Friends/'+uname+'_pflist.txt'
+	plist_cntnt=[]
+	try:
+		fileio=open(filename,'r')
+	except IOError:
+		print 'PLIST CORRUPT'
+		sys.exit()
+	for line in fileio:
+		plist_cntnt.append(line.strip())
+	fileio.close()
+	return plist_cntnt
+#_____________ADDING FRIEND______________________
+def fb_acceptfrnd(uname, funame):
+	filename='Friends/'+uname+'_pflist.txt'
+	unames_kill=[]
+	try:
+		fileio=open(filename,'r')
+	except IOError:
+		print 'PLIST Error'
+		sys.exit()
+	for line in fileio:
+		unames_kill.append(line.strip())
+	print unames_kill
+	unames_kill.remove(funame)
+	fileio.close()
+	try:
+		fileio=open(filename,'w')
+	except IOError:
+		print 'PLIST CORRUPT'
+		sys.exit()
+	for line in unames_kill:
+		fileio.write(line+'\n')
+	fileio.close()
+	del unames_kill[:]
+
+	filename = 'Friends/'+uname+'_flist.txt'
+	try:
+		fileio=open(filename,'a')
+	except IOError:
+		print 'FLIST Error'
+		sys.exit()
+	fileio.write(funame+'\n')
+	fileio.close()
+	filename='Friends/'+funame+'_flist.txt'
+	try:
+		fileio=open(filename,'a')
+	except IOError:
+		print 'FLIST corrupted'
+		sys.exit()
+	fileio.write(uname+'\n')
+	fileio.close()	
+#______________!Reject FRiend Request___________
+def fb_rejectfrnd(uname, funame):
+	filename='Friends/'+uname+'_pflist.txt'
+	unames_kill=[]
+	try:
+		fileio=open(filename,'r')
+	except IOError:
+		print 'PLIST Error'
+		sys.exit()
+	for line in fileio:
+		unames_kill.append(line.strip())
+	print unames_kill
+	unames_kill.remove(funame)
+	fileio.close()
+	try:
+		fileio=open(filename,'w')
+	except IOError:
+		print 'PLIST CORRUPT'
+		sys.exit()
+	for line in unames_kill:
+		fileio.write(line+'\n')
+	fileio.close()
+	del unames_kill[:]
+
+

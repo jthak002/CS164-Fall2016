@@ -101,7 +101,7 @@ while 1:
 		else:
 			s.send('garbage value')
 			continue
-	elif (menu_choice ==' Send Friend Requests' or menu_choice =='5'):
+	elif (menu_choice =='Send Friend Requests' or menu_choice =='5'):
 		funame=raw_input('Enter Friend\'s Username: ')
 		funame=funame.strip()
 		s.send(funame)
@@ -112,6 +112,34 @@ while 1:
 			print 'Friend Request Not Sent\n1.Invalid Username OR\n2.Friend Request Already Sent'
 		s.send('garbage value')
 		  
+	elif (menu_choice =='Pending Friend Requests' or menu_choice =='6'):
+		print'Here are your pending friend requests:'
+		pflist=s.recv(1024)
+		if pflist == 'empty':
+			print 'No pending friend requests'
+			s.send('garbage value')	#continue here
+			continue				#start menu again
+		print pflist
+		d_list=pflist.split('\n')
+		print 'Enter \'accept\' or \'reject\' followed by username to accept or reject friend request or \'exit\' to go back to the main menu'
+		while 1:	#waiting to receive proper input
+			resp=raw_input()
+			if resp =='exit':
+				s.send('exit')
+				print s.recv(1024)
+				break
+			pfr=resp.split(' ')
+			if len(pfr)==2:
+				if ((pfr[0] == 'accept' or pfr[0]=='reject') and pfr[1].strip() in d_list):
+					s.send(pfr[0]+' '+pfr[1].strip())
+					print s.recv(1024) #receive cofirmation
+					break
+				else:
+					print'Invalid entry. please try again'
+			else:
+				print'Invalid entry. please try again'
+		s.send('garbage value')
+		
 	#________INVALID_ENTRIES_____
 	else:
 		print 'Invalid choice'
