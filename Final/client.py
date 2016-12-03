@@ -162,6 +162,8 @@ while 1:
 		print '!_________________NEWS FEED__________________!'
 		print s.recv(1024)
 		s.send('garbage value')
+	elif(menu_choice =='refresh' or menu_choice =='0'):
+		s.send('garbage value')
 	#________INVALID_ENTRIES_____
 	else:
 		print 'Invalid choice'

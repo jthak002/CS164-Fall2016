@@ -60,7 +60,7 @@ def clientthread(conn):
 	waste=conn.recv(1024)	#Python couples the ACKnowledgement and menu in one packet
 							#hence, flushing the sockets buffer 	
 	while login:
-		menu='1.change password\n2.logout\n3.messages (' + str(fb_mssgcnt(uname)) + ')\n4.send messages\n5.send friend request\n6.pending friend requests('+str(fb_countpfrnd(uname))+')\n7.enter your status update\n8.timeline\n9.news feed'
+		menu='1.change password\n2.logout\n3.messages (' + str(fb_mssgcnt(uname)) + ')\n4.send messages\n5.send friend request\n6.pending friend requests('+str(fb_countpfrnd(uname))+')\n7.enter your status update\n8.timeline\n9.news feed\n0.refresh'
 		conn.send(menu)
 		print 'Menu intiated'
 		menu_choice=conn.recv(1024)
@@ -191,6 +191,8 @@ def clientthread(conn):
 				for key in dictionary:
 					text=text+dictionary[key]+'\n'
 				conn.send(text)
+			conn.recv(1024)
+		elif (menu_choice=='refresh' or menu_choice=='0'):
 			conn.recv(1024)
 		#_________________INVALID MENU CHOICE_________________________		
 		else:
